@@ -1,0 +1,3 @@
+- successfully linked Yandex Translate API
+- implemented copy-broadcast-receiver to display a pop-up 
+- working on multilinguial support and other features
