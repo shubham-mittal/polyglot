@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
+import android.graphics.drawable.Drawable;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -19,6 +20,11 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import in.thegeekybaniya.polyglot.POJO.Translation;
 
 import static android.content.ContentValues.TAG;
 
@@ -42,9 +48,13 @@ public class FloatingWindow extends Service {
 
     Button close, detail;
 
+    FirebaseDatabase mRoot=FirebaseDatabase.getInstance();
+
+    DatabaseReference mData;
+
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    public int onStartCommand(final Intent intent, int flags, int startId) {
 //        orig=intent.getStringExtra("original");
 //
 //        trans= intent.getStringExtra("translated");
@@ -53,6 +63,9 @@ public class FloatingWindow extends Service {
 //        trans=preferences.getString("translated","null");
 //
 //        Log.d("TAG",trans);
+
+        mData=mRoot.getReference().child("notes");
+
 
 
 
@@ -67,6 +80,14 @@ public class FloatingWindow extends Service {
         return null;
     }
 
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+
+        Toast.makeText(this, "SERVICE ENDED", Toast.LENGTH_SHORT).show();
+    }
 
     @Override
     public void onCreate() {
@@ -108,10 +129,13 @@ public class FloatingWindow extends Service {
 
         LinearLayout.LayoutParams liParams=  new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
 
-        li.setBackgroundColor(Color.argb(66,255,234,100));
         li.setLayoutParams(liParams);
 
-        WindowManager.LayoutParams parameters=  new WindowManager.LayoutParams(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT,WindowManager.LayoutParams.TYPE_PHONE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT);
+        Drawable de = getResources().getDrawable(R.drawable.customborder) ;
+        li.setBackground(de);
+        li.setPadding(20,20,20,20);
+
+        WindowManager.LayoutParams parameters=  new WindowManager.LayoutParams(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT,WindowManager.LayoutParams.TYPE_PHONE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.OPAQUE);
         parameters.x=0;
         parameters.y=0;
         parameters.gravity= Gravity.CENTER| Gravity.CENTER;
@@ -124,7 +148,7 @@ public class FloatingWindow extends Service {
 
 
 
-        fl.setBackgroundColor(Color.BLUE);
+        fl.setBackgroundColor(Color.WHITE);
 
 
         wm.addView(fl, parameters);
@@ -133,6 +157,32 @@ public class FloatingWindow extends Service {
         original= (TextView) fl.findViewById(R.id.textView4);
 
         translated= (TextView) fl.findViewById(R.id.textView);
+        close= (Button) fl.findViewById(R.id.button3);
+
+        detail= (Button) fl.findViewById(R.id.button2);
+
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                wm.removeView(fl);
+
+                stopService(new Intent(getApplicationContext(), FloatingWindow.this.getClass()));
+            }
+        });
+
+        detail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                mData.push().setValue(new Translation(orig,trans));
+
+            }
+        });
+        
+        
+        
+        
 
 
 
@@ -143,7 +193,7 @@ public class FloatingWindow extends Service {
         translated.setText(trans);
 
 
-        
+
 
 
         li.setOnTouchListener(new View.OnTouchListener() {
