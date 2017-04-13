@@ -3,7 +3,9 @@ package in.thegeekybaniya.polyglot;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -37,13 +39,13 @@ public class MainActivity extends AppCompatActivity {
         btn= (Button) findViewById(R.id.button);
 
         Intent myIntent = new Intent(MainActivity.this, ClipboardMonitor.class);
-        startService(myIntent);
+//        startService(myIntent);
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent myIntent = new Intent(MainActivity.this, FloatingWindow.class);
-                startService(myIntent);
+//                Intent myIntent = new Intent(MainActivity.this, FloatingWindow.class);
+//                startService(myIntent);
 
 
 
@@ -56,10 +58,11 @@ public class MainActivity extends AppCompatActivity {
         final ClipboardManager clipboard = (ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
         clipboard.addPrimaryClipChangedListener( new ClipboardManager.OnPrimaryClipChangedListener() {
             public void onPrimaryClipChanged() {
-                String a = clipboard.getText().toString();
+                final String a = clipboard.getText().toString();
+                final String SAME = a ;
                 Toast.makeText(getBaseContext(),"Copy:\n"+a,Toast.LENGTH_LONG).show();
-                Intent myIntent = new Intent(MainActivity.this, FloatingWindow.class);
-                startService(myIntent);
+                final Intent myIntent = new Intent(MainActivity.this, FloatingWindow.class);
+//                startService(myIntent);
                 retrofit= new Retrofit.Builder()
                         .baseUrl("https://translate.yandex.net")
                         .addConverterFactory(GsonConverterFactory.create())
@@ -82,6 +85,31 @@ public class MainActivity extends AppCompatActivity {
                         try {
                             Log.d(TAG, "onResponse: "+ URLDecoder.decode(l.get(0), "UTF-8"));
                             Toast.makeText(MainActivity.this, "Translation:"+URLDecoder.decode(l.get(0), "UTF-8") , Toast.LENGTH_LONG).show();
+
+//                            myIntent.putExtra("original",a );a
+
+                            if (!a.equals(URLDecoder.decode(l.get(0), "UTF-8"))){
+
+                                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                                SharedPreferences.Editor editor = preferences.edit();
+                                editor.putString("original",a);
+
+                                Log.d(TAG, "onResponse: ");
+
+                                editor.putString("translated",URLDecoder.decode(l.get(0), "UTF-8"));
+                                editor.commit() ;
+                                startService(myIntent);
+
+                            }
+
+
+
+
+
+
+
+
+
 
 
                         } catch (UnsupportedEncodingException e) {

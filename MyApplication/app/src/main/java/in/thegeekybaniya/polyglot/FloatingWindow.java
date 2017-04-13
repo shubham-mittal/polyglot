@@ -2,9 +2,11 @@ package in.thegeekybaniya.polyglot;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.Gravity;
@@ -14,6 +16,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import static android.content.ContentValues.TAG;
@@ -31,6 +34,30 @@ public class FloatingWindow extends Service {
 
     FrameLayout fl;
 
+
+    TextView original, translated;
+
+    String orig, trans;
+
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+//        orig=intent.getStringExtra("original");
+//
+//        trans= intent.getStringExtra("translated");
+//        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+//        orig=preferences.getString("original","null");
+//        trans=preferences.getString("translated","null");
+//
+//        Log.d("TAG",trans);
+
+
+
+
+
+        return super.onStartCommand(intent, flags, startId);
+    }
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -46,8 +73,26 @@ public class FloatingWindow extends Service {
 
         wm= (WindowManager) getSystemService(WINDOW_SERVICE);
 
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        orig=preferences.getString("original","null");
+        trans=preferences.getString("translated","null");
+
+        Log.d("PIYUSH",trans);
+
+
+
+//
+//        original= (TextView) fl.findViewById(R.id.textView4);
+//
+//        translated= (TextView) fl.findViewById(R.id.textView);
+
+
+
+
+
 
         fl=new FrameLayout(this);
+
 
 
 
@@ -63,7 +108,7 @@ public class FloatingWindow extends Service {
         li.setBackgroundColor(Color.argb(66,255,234,100));
         li.setLayoutParams(liParams);
 
-        WindowManager.LayoutParams parameters=  new WindowManager.LayoutParams(400, 150,WindowManager.LayoutParams.TYPE_PHONE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT);
+        WindowManager.LayoutParams parameters=  new WindowManager.LayoutParams(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT,WindowManager.LayoutParams.TYPE_PHONE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT);
         parameters.x=0;
         parameters.y=0;
         parameters.gravity= Gravity.CENTER| Gravity.CENTER;
@@ -73,10 +118,32 @@ public class FloatingWindow extends Service {
 
         layoutInflater.inflate(R.layout.window_layout, fl, true);
 
+
+
+
         fl.setBackgroundColor(Color.BLUE);
 
 
         wm.addView(fl, parameters);
+
+
+        original= (TextView) fl.findViewById(R.id.textView4);
+
+        translated= (TextView) fl.findViewById(R.id.textView);
+
+
+
+
+
+        original.setText(orig);
+
+        translated.setText(trans);
+
+
+
+
+
+
 
 
 
