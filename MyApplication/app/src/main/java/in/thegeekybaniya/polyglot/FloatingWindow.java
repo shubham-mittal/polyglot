@@ -3,11 +3,11 @@ package in.thegeekybaniya.polyglot;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.speech.tts.TextToSpeech;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.Gravity;
@@ -24,6 +24,8 @@ import android.widget.Toast;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.Locale;
+
 import in.thegeekybaniya.polyglot.POJO.Translation;
 
 import static android.content.ContentValues.TAG;
@@ -34,6 +36,8 @@ import static android.content.ContentValues.TAG;
  */
 
 public class FloatingWindow extends Service {
+
+    TextToSpeech t1;
 
     WindowManager wm;
 
@@ -46,7 +50,7 @@ public class FloatingWindow extends Service {
 
     String orig, trans;
 
-    Button close, detail;
+    Button close, detail,speech;
 
     FirebaseDatabase mRoot=FirebaseDatabase.getInstance();
 
@@ -63,6 +67,8 @@ public class FloatingWindow extends Service {
 //        trans=preferences.getString("translated","null");
 //
 //        Log.d("TAG",trans);
+
+
 
         mData=mRoot.getReference().child("notes");
 
@@ -148,7 +154,7 @@ public class FloatingWindow extends Service {
 
 
 
-        fl.setBackgroundColor(Color.WHITE);
+//        fl.setBackgroundColor(Color.WHITE);
 
 
         wm.addView(fl, parameters);
@@ -160,6 +166,11 @@ public class FloatingWindow extends Service {
         close= (Button) fl.findViewById(R.id.button3);
 
         detail= (Button) fl.findViewById(R.id.button2);
+
+        speech= (Button) fl.findViewById(R.id.speech);
+
+
+
 
         close.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -191,6 +202,28 @@ public class FloatingWindow extends Service {
         original.setText(orig);
 
         translated.setText(trans);
+
+
+        t1= new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status!=TextToSpeech.ERROR){
+                    t1.setLanguage(Locale.US);
+
+                }
+            }
+        });
+
+        speech.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                t1.speak(orig, TextToSpeech.QUEUE_FLUSH, null);
+
+            }
+        });
+
 
 
 
