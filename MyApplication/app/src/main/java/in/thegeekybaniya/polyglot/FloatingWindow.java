@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -38,6 +39,8 @@ public class FloatingWindow extends Service {
     TextView original, translated;
 
     String orig, trans;
+
+    Button close, detail;
 
 
     @Override
@@ -140,12 +143,7 @@ public class FloatingWindow extends Service {
         translated.setText(trans);
 
 
-
-
-
-
-
-
+        
 
 
         li.setOnTouchListener(new View.OnTouchListener() {

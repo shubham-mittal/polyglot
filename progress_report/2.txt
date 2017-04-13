@@ -1,0 +1,5 @@
+-Linked the Core FUnctionalities
+
+-Improving Ui 
+
+- Adding Extra Features
