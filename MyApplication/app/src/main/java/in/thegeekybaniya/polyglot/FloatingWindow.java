@@ -8,9 +8,11 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -27,6 +29,7 @@ public class FloatingWindow extends Service {
 
     LinearLayout li;
 
+    FrameLayout fl;
 
     @Nullable
     @Override
@@ -43,6 +46,16 @@ public class FloatingWindow extends Service {
 
         wm= (WindowManager) getSystemService(WINDOW_SERVICE);
 
+
+        fl=new FrameLayout(this);
+
+
+
+
+
+
+
+
         li=new LinearLayout(this);
 
         LinearLayout.LayoutParams liParams=  new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
@@ -55,7 +68,17 @@ public class FloatingWindow extends Service {
         parameters.y=0;
         parameters.gravity= Gravity.CENTER| Gravity.CENTER;
 
-        wm.addView(li, parameters);
+
+        final LayoutInflater layoutInflater= (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+
+        layoutInflater.inflate(R.layout.window_layout, fl, true);
+
+        fl.setBackgroundColor(Color.BLUE);
+
+
+        wm.addView(fl, parameters);
+
+
 
 
         li.setOnTouchListener(new View.OnTouchListener() {
@@ -72,4 +95,6 @@ public class FloatingWindow extends Service {
             }
         });
     }
+
+   
 }
